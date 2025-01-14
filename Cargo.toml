@@ -1,0 +1,22 @@
+[package]
+name = "antiraid-types"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"]}
+
+[dependencies.serenity]
+git = "https://github.com/Anti-Raid/serenity"
+branch = "next"
+features = ["model", "http", "cache", "rustls_backend", "unstable"]
+
+[dependencies.kittycat]
+git = "https://github.com/infinitybotlist/kittycat"
+branch = "main"
+
+[dependencies.uuid]
+version = "1"
+features = ["v4", "fast-rng", "serde"]
