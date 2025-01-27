@@ -101,6 +101,13 @@ pub struct TemplateSettingExecuteEventData {
     pub author: serenity::all::UserId,
 }
 
+// TODO Later
+//#[derive(Debug, serde::Serialize, serde::Deserialize)]
+//pub struct TemplatePageRequestEventData {
+//    pub target_template: Option<String>,
+//    pub author: serenity::all::UserId,
+//}
+
 #[derive(Debug, serde::Serialize, serde::Deserialize, IntoStaticStr, VariantNames)]
 #[must_use]
 pub enum AntiraidEvent {
@@ -151,6 +158,11 @@ pub enum AntiraidEvent {
 
     /// A template setting execute event. Fired when a template setting is executed
     TemplateSettingExecute(TemplateSettingExecuteEventData),
+    // TODO Later
+    // A template page request event. Fired when a template page is requested
+    //
+    // E.g. when user opens dashboard etc
+    //TemplatePageRequest(TemplatePageRequestEventData),
 }
 
 impl std::fmt::Display for AntiraidEvent {
