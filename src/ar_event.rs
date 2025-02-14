@@ -5,13 +5,6 @@ use serde_json::Value;
 use strum::{IntoStaticStr, VariantNames};
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct BuiltinCommandExecuteData {
-    pub command: String,
-    pub user_id: serenity::all::UserId,
-    pub user_info: UserInfo,
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct PermissionCheckData {
     pub perm: kittycat::perms::Permission,
     pub user_id: serenity::all::UserId,
@@ -137,11 +130,6 @@ pub enum AntiraidEvent {
     /// The inner Vec<String> is the list of templates modified/reloaded
     OnStartup(Vec<String>),
 
-    /// A builtin command execute event is fired when a core/builtin command is executed
-    ///
-    /// This contains three fields, the command name, the user id and the UserInfo
-    BuiltinCommandExecute(BuiltinCommandExecuteData),
-
     /// A permission check event is fired when a permission check is done
     PermissionCheckExecute(PermissionCheckData),
 
@@ -189,7 +177,6 @@ impl AntiraidEvent {
             AntiraidEvent::PunishmentExpire(punishment) => serde_json::to_value(punishment),
             AntiraidEvent::PunishmentDelete(punishment) => serde_json::to_value(punishment),
             AntiraidEvent::OnStartup(templates) => serde_json::to_value(templates),
-            AntiraidEvent::BuiltinCommandExecute(data) => serde_json::to_value(data),
             AntiraidEvent::PermissionCheckExecute(data) => serde_json::to_value(data),
             AntiraidEvent::ModerationStart(data) => serde_json::to_value(data),
             AntiraidEvent::ModerationEnd(data) => serde_json::to_value(data),
@@ -209,7 +196,6 @@ impl AntiraidEvent {
             AntiraidEvent::PunishmentExpire(punishment) => Some(punishment.creator.to_string()),
             AntiraidEvent::PunishmentDelete(punishment) => Some(punishment.creator.to_string()), // For now
             AntiraidEvent::OnStartup(_) => None,
-            AntiraidEvent::BuiltinCommandExecute(be) => Some(be.user_id.to_string()),
             AntiraidEvent::PermissionCheckExecute(pce) => Some(pce.user_id.to_string()),
             AntiraidEvent::ModerationStart(data) => Some(data.author.user.id.to_string()),
             AntiraidEvent::ModerationEnd(_) => None,
