@@ -94,6 +94,13 @@ pub struct TemplateSettingExecuteEventData {
     pub author: serenity::all::UserId,
 }
 
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+pub struct ScheduledExecutionEventData {
+    pub id: String,
+    pub data: serde_json::Value,
+    pub run_at: chrono::DateTime<chrono::Utc>,
+}
+
 // TODO Later
 //#[derive(Debug, serde::Serialize, serde::Deserialize)]
 //pub struct TemplatePageRequestEventData {
@@ -146,6 +153,10 @@ pub enum AntiraidEvent {
 
     /// A template setting execute event. Fired when a template setting is executed
     TemplateSettingExecute(TemplateSettingExecuteEventData),
+
+    /// Fired when a scheduled execution is executed
+    ScheduledExecution(ScheduledExecutionEventData),
+
     // TODO Later
     // A template page request event. Fired when a template page is requested
     //
@@ -182,6 +193,7 @@ impl AntiraidEvent {
             AntiraidEvent::ModerationEnd(data) => serde_json::to_value(data),
             AntiraidEvent::ExternalKeyUpdate(data) => serde_json::to_value(data),
             AntiraidEvent::TemplateSettingExecute(data) => serde_json::to_value(data),
+            AntiraidEvent::ScheduledExecution(data) => serde_json::to_value(data),
         }
     }
 
@@ -201,6 +213,7 @@ impl AntiraidEvent {
             AntiraidEvent::ModerationEnd(_) => None,
             AntiraidEvent::ExternalKeyUpdate(data) => Some(data.author.to_string()),
             AntiraidEvent::TemplateSettingExecute(data) => Some(data.author.to_string()),
+            AntiraidEvent::ScheduledExecution(_) => None, // Scheduled executions inherently have no author
         }
     }
 }
