@@ -81,7 +81,7 @@ pub enum TemplateSettingExecuteEventDataAction {
         fields: indexmap::IndexMap<String, Value>,
     },
     Delete {
-        primary_key: Value,
+        fields: indexmap::IndexMap<String, Value>,
     },
 }
 
@@ -111,27 +111,6 @@ pub struct ScheduledExecutionEventData {
 #[derive(Debug, serde::Serialize, serde::Deserialize, IntoStaticStr, VariantNames)]
 #[must_use]
 pub enum AntiraidEvent {
-    /// A sting create event. Dispatched when a sting is created
-    StingCreate(Sting),
-
-    /// A sting update event. Dispatched when a sting is updated
-    StingUpdate(Sting),
-
-    /// A sting expiry event. Dispatched when a sting expires
-    StingExpire(Sting),
-
-    /// A sting delete event. Dispatched when a sting is manually deleted
-    StingDelete(Sting),
-
-    /// A punishment create event. Dispatched when a punishment is created
-    PunishmentCreate(Punishment),
-
-    /// A punishment expiration event. Dispatched when a punishment expires
-    PunishmentExpire(Punishment),
-
-    /// A punishment delete event. Dispatched when a punishment is manually deleted
-    PunishmentDelete(Punishment),
-
     /// An on startup event is fired when a set of templates are modified
     ///
     /// The inner Vec<String> is the list of templates modified/reloaded
@@ -180,13 +159,6 @@ impl AntiraidEvent {
     /// Convert the event's inner data to a JSON value
     pub fn to_value(&self) -> Result<serde_json::Value, serde_json::Error> {
         match self {
-            AntiraidEvent::StingCreate(sting) => serde_json::to_value(sting),
-            AntiraidEvent::StingUpdate(sting) => serde_json::to_value(sting),
-            AntiraidEvent::StingExpire(sting) => serde_json::to_value(sting),
-            AntiraidEvent::StingDelete(sting) => serde_json::to_value(sting),
-            AntiraidEvent::PunishmentCreate(punishment) => serde_json::to_value(punishment),
-            AntiraidEvent::PunishmentExpire(punishment) => serde_json::to_value(punishment),
-            AntiraidEvent::PunishmentDelete(punishment) => serde_json::to_value(punishment),
             AntiraidEvent::OnStartup(templates) => serde_json::to_value(templates),
             AntiraidEvent::PermissionCheckExecute(data) => serde_json::to_value(data),
             AntiraidEvent::ModerationStart(data) => serde_json::to_value(data),
@@ -200,13 +172,6 @@ impl AntiraidEvent {
     /// Returns the author of the event
     pub fn author(&self) -> Option<String> {
         match self {
-            AntiraidEvent::StingCreate(sting) => Some(sting.creator.to_string()),
-            AntiraidEvent::StingUpdate(sting) => Some(sting.creator.to_string()),
-            AntiraidEvent::StingExpire(sting) => Some(sting.creator.to_string()),
-            AntiraidEvent::StingDelete(sting) => Some(sting.creator.to_string()), // For now
-            AntiraidEvent::PunishmentCreate(punishment) => Some(punishment.creator.to_string()),
-            AntiraidEvent::PunishmentExpire(punishment) => Some(punishment.creator.to_string()),
-            AntiraidEvent::PunishmentDelete(punishment) => Some(punishment.creator.to_string()), // For now
             AntiraidEvent::OnStartup(_) => None,
             AntiraidEvent::PermissionCheckExecute(pce) => Some(pce.user_id.to_string()),
             AntiraidEvent::ModerationStart(data) => Some(data.author.user.id.to_string()),
