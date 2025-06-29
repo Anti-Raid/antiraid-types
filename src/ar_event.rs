@@ -23,19 +23,15 @@ pub struct GetSettingsEvent {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct SettingExecuteEventAction {
-    op: OperationType,
-    fields: indexmap::IndexMap<String, Value>,
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub struct SettingExecuteEvent {
     /// The ID of the setting being executed
     pub id: String,
-    /// The action being executed
-    pub action: SettingExecuteEventAction,
     /// The author of the event
     pub author: serenity::all::UserId,
+    /// The operation being performed on the setting
+    pub op: OperationType,
+    /// The fields being modified
+    pub fields: indexmap::IndexMap<String, Value>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
