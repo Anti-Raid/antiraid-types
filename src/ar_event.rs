@@ -16,8 +16,13 @@ pub struct ExternalKeyUpdateEventData {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "op")]
-pub enum TemplateSettingExecuteEventDataAction {
+pub struct GetSettingsEvent {
+    pub author: serenity::all::UserId,
+}
+
+#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type")]
+pub enum SettingExecuteEventAction {
     View {
         filters: indexmap::IndexMap<String, Value>,
     },
@@ -33,11 +38,12 @@ pub enum TemplateSettingExecuteEventDataAction {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct TemplateSettingExecuteEventData {
-    pub template_id: String,
-    pub setting_id: String,
-    pub correlation_id: uuid::Uuid, // A response from this must include a "correlation_id" field with this value so
-    pub action: TemplateSettingExecuteEventDataAction,
+pub struct SettingExecuteEvent {
+    /// The ID of the setting being executed
+    pub id: String,
+    /// The action being executed
+    pub action: SettingExecuteEventAction,
+    /// The author of the event
     pub author: serenity::all::UserId,
 }
 
@@ -47,13 +53,6 @@ pub struct KeyExpiryEvent {
     pub key: String,
     pub scopes: Vec<String>,
 }
-
-// TODO Later
-//#[derive(Debug, serde::Serialize, serde::Deserialize)]
-//pub struct TemplatePageRequestEventData {
-//    pub target_template: Option<String>,
-//    pub author: serenity::all::UserId,
-//}
 
 #[derive(Debug, serde::Serialize, serde::Deserialize, IntoStaticStr, VariantNames)]
 #[must_use]
@@ -66,16 +65,16 @@ pub enum AntiraidEvent {
     /// A key external modify event. Fired when a key is modified externally
     ExternalKeyUpdate(ExternalKeyUpdateEventData),
 
-    /// A template setting execute event. Fired when a template setting is executed
-    TemplateSettingExecute(TemplateSettingExecuteEventData),
-
     /// Fired when a key expires within the key-value store
     KeyExpiry(KeyExpiryEvent),
-    // TODO Later
-    // A template page request event. Fired when a template page is requested
-    //
-    // E.g. when user opens dashboard etc
-    //TemplatePageRequest(TemplatePageRequestEventData),
+
+    /// A GetSettings event. Fired when settings are requested by the user
+    ///
+    /// E.g. when user opens dashboard etc
+    GetSettings(GetSettingsEvent),
+
+    /// A ExecuteSetting event. Fired when a setting is executed by the user
+    ExecuteSetting(SettingExecuteEvent),
 }
 
 impl std::fmt::Display for AntiraidEvent {
@@ -96,8 +95,9 @@ impl AntiraidEvent {
         match self {
             AntiraidEvent::OnStartup(templates) => serde_json::to_value(templates),
             AntiraidEvent::ExternalKeyUpdate(data) => serde_json::to_value(data),
-            AntiraidEvent::TemplateSettingExecute(data) => serde_json::to_value(data),
             AntiraidEvent::KeyExpiry(data) => serde_json::to_value(data),
+            AntiraidEvent::GetSettings(data) => serde_json::to_value(data),
+            AntiraidEvent::ExecuteSetting(data) => serde_json::to_value(data),
         }
     }
 
@@ -106,8 +106,9 @@ impl AntiraidEvent {
         match self {
             AntiraidEvent::OnStartup(_) => None,
             AntiraidEvent::ExternalKeyUpdate(data) => Some(data.author.to_string()),
-            AntiraidEvent::TemplateSettingExecute(data) => Some(data.author.to_string()),
             AntiraidEvent::KeyExpiry(_) => None, // Key expiries inherently have no author
+            AntiraidEvent::GetSettings(data) => Some(data.author.to_string()),
+            AntiraidEvent::ExecuteSetting(data) => Some(data.author.to_string()),
         }
     }
 }
