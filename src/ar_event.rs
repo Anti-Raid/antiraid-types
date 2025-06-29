@@ -1,6 +1,8 @@
 use serde_json::Value;
 use strum::{IntoStaticStr, VariantNames};
 
+use crate::setting::OperationType;
+
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub enum ExternalKeyUpdateEventDataAction {
     Create,
@@ -21,20 +23,9 @@ pub struct GetSettingsEvent {
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "type")]
-pub enum SettingExecuteEventAction {
-    View {
-        filters: indexmap::IndexMap<String, Value>,
-    },
-    Create {
-        fields: indexmap::IndexMap<String, Value>,
-    },
-    Update {
-        fields: indexmap::IndexMap<String, Value>,
-    },
-    Delete {
-        fields: indexmap::IndexMap<String, Value>,
-    },
+pub struct SettingExecuteEventAction {
+    op: OperationType,
+    fields: indexmap::IndexMap<String, Value>,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
