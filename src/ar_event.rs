@@ -1,58 +1,5 @@
-use crate::punishments::Punishment;
-use crate::stings::Sting;
-use crate::userinfo::UserInfo;
 use serde_json::Value;
 use strum::{IntoStaticStr, VariantNames};
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct PermissionCheckData {
-    pub perm: kittycat::perms::Permission,
-    pub user_id: serenity::all::UserId,
-    pub user_info: UserInfo,
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "action")]
-pub enum ModerationAction {
-    Kick {
-        member: serenity::all::Member, // The target to kick
-    },
-    TempBan {
-        user: serenity::all::User, // The target to ban
-        duration: u64,             // Duration, in seconds
-        prune_dmd: u8,
-    },
-    Ban {
-        user: serenity::all::User, // The target to ban
-        prune_dmd: u8,
-    },
-    Unban {
-        user: serenity::all::User, // The target to unban
-    },
-    Timeout {
-        member: serenity::all::Member, // The target to timeout
-        duration: u64,                 // Duration, in seconds
-    },
-    Prune {
-        user: Option<serenity::all::User>,
-        prune_opts: serde_json::Value,
-        channels: Vec<serenity::all::ChannelId>,
-    },
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct ModerationStartEventData {
-    pub correlation_id: uuid::Uuid, // This will also be sent on ModerationEndEventData to correlate the events while avoiding duplication of data
-    pub action: ModerationAction,
-    pub author: serenity::all::Member,
-    pub num_stings: i32,
-    pub reason: Option<String>,
-}
-
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct ModerationEndEventData {
-    pub correlation_id: uuid::Uuid, // Will correlate with a ModerationStart's event data
-}
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub enum ExternalKeyUpdateEventDataAction {
@@ -116,17 +63,6 @@ pub enum AntiraidEvent {
     /// The inner Vec<String> is the list of templates modified/reloaded
     OnStartup(Vec<String>),
 
-    /// A permission check event is fired when a permission check is done
-    PermissionCheckExecute(PermissionCheckData),
-
-    /// A moderation start event is fired prior to the execution of a moderation action
-    ModerationStart(ModerationStartEventData),
-
-    /// A moderation end event is fired after the execution of a moderation action
-    ///
-    /// Note that this event is not guaranteed to be fired (e.g. the action fails, jobserver timeout etc.)
-    ModerationEnd(ModerationEndEventData),
-
     /// A key external modify event. Fired when a key is modified externally
     ExternalKeyUpdate(ExternalKeyUpdateEventData),
 
@@ -159,9 +95,6 @@ impl AntiraidEvent {
     pub fn to_value(&self) -> Result<serde_json::Value, serde_json::Error> {
         match self {
             AntiraidEvent::OnStartup(templates) => serde_json::to_value(templates),
-            AntiraidEvent::PermissionCheckExecute(data) => serde_json::to_value(data),
-            AntiraidEvent::ModerationStart(data) => serde_json::to_value(data),
-            AntiraidEvent::ModerationEnd(data) => serde_json::to_value(data),
             AntiraidEvent::ExternalKeyUpdate(data) => serde_json::to_value(data),
             AntiraidEvent::TemplateSettingExecute(data) => serde_json::to_value(data),
             AntiraidEvent::KeyExpiry(data) => serde_json::to_value(data),
@@ -172,9 +105,6 @@ impl AntiraidEvent {
     pub fn author(&self) -> Option<String> {
         match self {
             AntiraidEvent::OnStartup(_) => None,
-            AntiraidEvent::PermissionCheckExecute(pce) => Some(pce.user_id.to_string()),
-            AntiraidEvent::ModerationStart(data) => Some(data.author.user.id.to_string()),
-            AntiraidEvent::ModerationEnd(_) => None,
             AntiraidEvent::ExternalKeyUpdate(data) => Some(data.author.to_string()),
             AntiraidEvent::TemplateSettingExecute(data) => Some(data.author.to_string()),
             AntiraidEvent::KeyExpiry(_) => None, // Key expiries inherently have no author
