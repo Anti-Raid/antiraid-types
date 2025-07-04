@@ -69,6 +69,7 @@ pub struct Column {
     pub secret: bool,
 
     /// Whether the field should be hidden for the given operations
+    #[serde(default)]
     pub hidden: Vec<String>,
 
     /// Whether the field is readonly for the given operations. Readonly fields may or may not be sent to the server
