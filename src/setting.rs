@@ -68,28 +68,11 @@ pub struct Column {
     /// A secret field that is not shown to the user
     pub secret: bool,
 
-    /// Whether the field is readonly. Readonly fields may or may not be sent to the server
-    pub readonly: Vec<OperationType>,
-}
+    /// Whether the field should be hidden for the given operations
+    pub hidden: Vec<String>,
 
-#[derive(Debug, Clone, Copy, PartialEq, Hash, Eq, serde::Serialize, serde::Deserialize)]
-#[allow(dead_code)]
-pub enum OperationType {
-    View,
-    Create,
-    Update,
-    Delete,
-}
-
-impl std::fmt::Display for OperationType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            OperationType::View => write!(f, "View"),
-            OperationType::Create => write!(f, "Create"),
-            OperationType::Update => write!(f, "Update"),
-            OperationType::Delete => write!(f, "Delete"),
-        }
-    }
+    /// Whether the field is readonly for the given operations. Readonly fields may or may not be sent to the server
+    pub readonly: Vec<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -106,9 +89,15 @@ pub struct Setting {
     /// Title template, used for the title of the embed
     pub title_template: String,
 
+    /// Index by
+    ///
+    /// If set, all options within the setting will be draggable with the provided index field (must be
+    /// a integer being set to the position of the item in the list)
+    pub index_by: Option<String>,
+
     /// The columns for this option
     pub columns: Vec<Column>,
 
     /// The supported operations for this option
-    pub operations: Vec<OperationType>,
+    pub operations: Vec<String>,
 }
