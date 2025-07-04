@@ -11,6 +11,21 @@ pub enum ColumnType {
         /// The inner type of the array
         inner: InnerColumnType,
     },
+    /// A widget
+    Widget {
+        /// The inner widget type
+        inner: InnerWidget,
+    },
+}
+
+/// Note: this is merely a hint used for styling the website
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type")]
+pub enum InnerWidget {
+    Warning {
+        /// The warning message to display
+        message: String,
+    },
 }
 
 /// Note: this is merely a hint used for styling the website
