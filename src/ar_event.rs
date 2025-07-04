@@ -1,8 +1,6 @@
 use serde_json::Value;
 use strum::{IntoStaticStr, VariantNames};
 
-use crate::setting::OperationType;
-
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 pub enum ExternalKeyUpdateEventDataAction {
     Create,
@@ -29,7 +27,7 @@ pub struct SettingExecuteEvent {
     /// The author of the event
     pub author: serenity::all::UserId,
     /// The operation being performed on the setting
-    pub op: OperationType,
+    pub op: String,
     /// The fields being modified
     pub fields: indexmap::IndexMap<String, Value>,
 }
