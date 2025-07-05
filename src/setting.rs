@@ -22,9 +22,19 @@ pub enum ColumnType {
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum InnerWidget {
+    Info {
+        /// The info message to display
+        message: String,
+    },
     Warning {
         /// The warning message to display
         message: String,
+    },
+    Button {
+        /// The label of the button
+        label: String,
+        /// The operation to perform when the button is clicked
+        op: String,
     },
 }
 
@@ -36,7 +46,7 @@ pub enum InnerColumnType {
         min_length: Option<usize>,
         max_length: Option<usize>,
         allowed_values: Vec<String>, // If empty, all values are allowed
-        kind: String, // e.g. uuid, textarea, channel, user, role, interval, timestamp etc.
+        kind: String, // e.g. uuid, textarea, channel, user, role, interval, timestamp, password etc.
     },
     Integer {},
     Float {},
@@ -68,6 +78,9 @@ pub struct Column {
     /// The description of the column
     pub description: String,
 
+    /// Placeholder text for the column, used in the UI
+    pub placeholder: Option<String>,
+
     /// The type of the column
     pub column_type: ColumnType,
 
@@ -79,9 +92,6 @@ pub struct Column {
 
     /// Suggestions to display
     pub suggestions: ColumnSuggestion,
-
-    /// A secret field that is not shown to the user
-    pub secret: bool,
 
     /// Whether the field should be hidden for the given operations
     #[serde(default)]
@@ -116,4 +126,12 @@ pub struct Setting {
 
     /// The supported operations for this option
     pub operations: Vec<String>,
+
+    /// Footer for the setting
+    pub footer: Option<Footer>,
+}
+
+pub struct Footer {
+    /// The text to display in the footer of the setting as a whole
+    pub end_text: String,
 }
