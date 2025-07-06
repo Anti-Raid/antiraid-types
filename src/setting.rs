@@ -46,6 +46,7 @@ pub enum InnerColumnType {
         min_length: Option<usize>,
         max_length: Option<usize>,
         allowed_values: Vec<String>, // If empty, all values are allowed
+        suggestions: Option<Vec<String>>, // If set, these are the suggestions for the input
         kind: String, // e.g. uuid, textarea, channel, user, role, interval, timestamp, password etc.
     },
     Integer {},
@@ -58,13 +59,6 @@ pub enum InnerColumnType {
     Json {
         style: String, // e.g. templateref etc.
     },
-}
-
-#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "type")]
-pub enum ColumnSuggestion {
-    Static { suggestions: Vec<String> },
-    None {},
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -89,9 +83,6 @@ pub struct Column {
 
     /// Whether or not the column is nullable
     pub nullable: bool,
-
-    /// Suggestions to display
-    pub suggestions: ColumnSuggestion,
 
     /// Whether the field should be hidden for the given operations
     #[serde(default)]
