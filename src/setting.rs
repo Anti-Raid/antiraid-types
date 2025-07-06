@@ -134,6 +134,7 @@ pub struct Setting {
     pub icon: Option<String>,
 }
 
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Footer {
     /// The text to display in the footer of the setting as a whole
     pub end_text: String,
