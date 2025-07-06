@@ -123,6 +123,9 @@ pub struct Setting {
 
     /// Icon to use for the setting
     pub icon: Option<String>,
+
+    /// Client side validation script
+    pub validation_template: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
