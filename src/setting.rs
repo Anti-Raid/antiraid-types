@@ -129,6 +129,9 @@ pub struct Setting {
 
     /// Footer for the setting
     pub footer: Option<Footer>,
+
+    /// Icon to use for the setting
+    pub icon: Option<String>,
 }
 
 pub struct Footer {
