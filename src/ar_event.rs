@@ -28,8 +28,8 @@ pub struct SettingExecuteEvent {
     pub author: serenity::all::UserId,
     /// The operation being performed on the setting
     pub op: String,
-    /// The fields being modified
-    pub fields: indexmap::IndexMap<String, Value>,
+    /// The fields of the operation. May be a map or list of fields
+    pub fields: Value,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
