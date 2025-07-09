@@ -103,8 +103,8 @@ pub struct Setting {
     /// The description of the option
     pub description: String,
 
-    /// Title template, used for the title of the embed
-    pub title_template: String,
+    /// View template, used for the title of the embed but can also be used for handling client side errors
+    pub view_template: Option<String>,
 
     /// Index by
     ///
@@ -126,6 +126,12 @@ pub struct Setting {
 
     /// Client side validation script
     pub validation_template: Option<String>,
+
+    /// Post-send script to run after the setting has been sent to the server
+    pub postsend_template: Option<String>,
+
+    /// DEPRACRATED, but still used in production badgerfang (TO REMOVE)
+    pub title_template: Option<String>,
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
